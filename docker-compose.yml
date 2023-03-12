@@ -8,50 +8,68 @@ services:
       dockerfile: Dockerfile
     image: siriwatgo.com/php
     container_name: app
-    restart: unless-stopped
+    # restart: unless-stopped
+    restart: always
     tty: true
     environment:
       SERVICE_NAME: app
       SERVICE_TAGS: dev
     working_dir: /var/www
+    # depends_on:
+    #   - db
+    # links:
+    #   - db:db
     volumes:
       - ./:/var/www
-      - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+      # - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+      - ./docker/php/php-fpm.conf:/usr/local/etc/php-fpm.conf
+      - ./docker/php/php.ini:/usr/local/etc/php/php.ini
+      - ./docker/logs/php-fpm:/var/log/php-fpm
+    expose:
+      - "9000"
+      - "22"
     networks:
       - app-network
 
   #Nginx Service
   webserver:
-    image: nginx:alpine
+    image: nginx:latest
     container_name: webserver
-    restart: unless-stopped
+    restart: always
     tty: true
     ports:
       - "80:80"
       - "443:443"
     volumes:
       - ./:/var/www
-      - ./docker/nginx/conf.d/:/etc/nginx/conf.d/
+      - ./docker/nginx/conf/nginx.conf:/etc/nginx/conf/nginx.conf:ro
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./docker/logs/nginx:/var/log/nginx
+      - ./docker/nginx/certs:/etc/nginx/certs
+      - /etc/localtime:/etc/localtime:ro
     networks:
       - app-network
 
   #MySQL Service
   db:
-    # image: mysql:5.7.41
-    image: mariadb:10
+    image: mariadb:latest
     container_name: db
-    restart: unless-stopped
+    restart: always
     tty: true
     ports:
       - "3306:3306"
     environment:
       MYSQL_DATABASE: laravel
-      MYSQL_ROOT_PASSWORD: your_mysql_root_password
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: laravel
+      MYSQL_PASSWORD: root
       SERVICE_TAGS: dev
       SERVICE_NAME: mysql
     volumes:
-      - dbdata:/var/lib/mysql/
-      - ./docker/mysql/my.cnf:/etc/mysql/my.cnf
+      # - ./docker/mysql/initdb:/docker-entrypoint-initdb.d
+      - ./docker/mysql/data:/var/lib/mysql
+      - ./docker/logs/mysql:/var/log/mysql
+      - /etc/localtime:/etc/localtime:ro
     networks:
       - app-network
 

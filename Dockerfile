@@ -1,4 +1,5 @@
-FROM php:8.1-fpm
+# FROM php:8.1.16-apache-buster
+FROM php:8.1.16-fpm
 
 # Copy composer.lock and composer.json
 COPY composer.lock composer.json /var/www/
@@ -26,6 +27,10 @@ RUN apt-get update && apt-get install -y \
     git \
     curl
 
+# TimeZone
+RUN cp /usr/share/zoneinfo/Asia/Bangkok /etc/localtime \
+    && echo "Asia/Bangkok" >  /etc/timezone
+
 # Clear cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
@@ -38,10 +43,9 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 # RUN docker-php-ext-configure gd --with-gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ --with-png-dir=/usr/include/
 # RUN docker-php-ext-install gd
 
-RUN php -r 'var_dump(gd_info());'
-
 # Install composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+# COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 
 # Add user for laravel application
 RUN groupadd -g 1000 www
@@ -59,6 +63,10 @@ COPY --chown=www:www . /var/www
 # Change current user to www
 USER www
 
+# RUN php artisan key:generate
+# RUN php artisan migrate --seed
+
 # Expose port 9000 and start php-fpm server
 EXPOSE 9000
+EXPOSE 22
 CMD ["php-fpm"]
