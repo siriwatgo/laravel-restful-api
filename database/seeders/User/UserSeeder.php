@@ -1,12 +1,13 @@
 <?php
 
-namespace Database\Seeders;
+namespace Database\Seeders\User;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
-use App\Models\User\UserModel;
+use App\Models\User\User;
 
 class UserSeeder extends Seeder
 {
@@ -16,9 +17,10 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         $password = Str::random(10);
-        $user = factory(UserModel::class)->create([
+        $user = User::factory()->create([
             'name' => Str::random(10),
             'email' => Str::random(10).'@example.com',
+            'email_verified_at' => Carbon::now(),
             'password' => Hash::make($password),
             'remember_token' => Str::random(10),
         ]);

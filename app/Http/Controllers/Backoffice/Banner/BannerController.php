@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Backoffice\Banner;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Resources\Banner\BannerResource;
-use App\Models\Banner\BannerModel;
+use App\Models\Banner\Banner;
 
 class BannerController extends Controller
 {
@@ -14,7 +14,7 @@ class BannerController extends Controller
      */
     public function index()
     {
-        $data = BannerModel::all();
+        $data = Banner::all();
         return BannerResource::collection($data);
     }
 
