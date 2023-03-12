@@ -5,17 +5,24 @@ namespace App\Http\Controllers\Backoffice\Banner;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Resources\Banner\BannerResource;
-use App\Models\Banner\Banner;
+use App\Interfaces\Banner\BannerRepositoryInterface;
 
 class BannerController extends Controller
 {
+    private BannerRepositoryInterface $bannerRepository;
+
+    public function __construct(BannerRepositoryInterface $bannerRepository)
+    {
+        $this->bannerRepository = $bannerRepository;
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $data = Banner::all();
-        return BannerResource::collection($data);
+        $banner = $this->bannerRepository->getAllBanner();
+        return BannerResource::collection($banner);
     }
 
     /**
