@@ -30,7 +30,6 @@ class BannerController extends Controller
      */
     public function store(Request $request)
     {
-        //
     }
 
     /**
@@ -38,7 +37,8 @@ class BannerController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $banner = $this->bannerRepository->getBannerById($id);
+        return BannerResource::collection($banner);
     }
 
     /**

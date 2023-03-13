@@ -23,4 +23,5 @@ Route::group([
 
     // Route::resource('banners', BannerController::class)->only(['index']);
     Route::get('banners', [BannerController::class, 'index'])->name('backoffice.index');
+    Route::get('banners/{bannersId}', [BannerController::class, 'show'])->name('backoffice.show');
 });

@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Banner;
 
+use Illuminate\Support\Facades\DB;
 use App\Interfaces\Banner\BannerRepositoryInterface;
 use App\Models\Banner\Banner;
 
@@ -17,7 +18,14 @@ class BannerRepository implements BannerRepositoryInterface
     }
     public function deleteBanner($bannerId)
     {
-        Banner::destroy($bannerId);
+        DB::beginTransaction();
+        try {
+            Banner::destroy($bannerId);
+        } catch (Exception $e) {
+            DB::rollBack();
+            // TODO: throw new InvalidArgumentException('Unable to delete post data');
+        }
+        DB::commit();
     }
     public function createBanner(array $bannerDetails)
     {
