@@ -21,7 +21,9 @@ Route::group([
 ], function () {
     Route::get('health', [HealthController::class, 'index'])->name('backoffice.health');
 
-    // Route::resource('banners', BannerController::class)->only(['index']);
     Route::get('banners', [BannerController::class, 'index'])->name('backoffice.index');
     Route::get('banners/{bannersId}', [BannerController::class, 'show'])->name('backoffice.show');
+    Route::post('banners', [BannerController::class, 'store'])->name('backoffice.store');
+    Route::put('banners/{bannersId}', [BannerController::class, 'update'])->name('backoffice.update');
+    Route::delete('banners/{bannersId}', [BannerController::class, 'destroy'])->name('backoffice.destroy');
 });

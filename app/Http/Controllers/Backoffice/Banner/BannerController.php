@@ -4,8 +4,11 @@ namespace App\Http\Controllers\Backoffice\Banner;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use App\Http\Resources\Banner\BannerResource;
 use App\Interfaces\Banner\BannerRepositoryInterface;
+use App\Http\Requests\Banner\StoreRequest;
+use App\Http\Requests\Banner\UpdateRequest;
 
 class BannerController extends Controller
 {
@@ -28,8 +31,10 @@ class BannerController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreRequest $request)
     {
+        $banner = $this->bannerRepository->createBanner($request);
+        return BannerResource::collection($banner);
     }
 
     /**
@@ -44,9 +49,10 @@ class BannerController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateRequest $request, string $id)
     {
-        //
+        $banner = $this->bannerRepository->updateBanner($id, $request);
+        return BannerResource::collection($banner);
     }
 
     /**
@@ -54,6 +60,7 @@ class BannerController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $this->bannerRepository->deleteBanner($id);
+        return response()->json()->setStatusCode(Response::HTTP_OK);
     }
 }
